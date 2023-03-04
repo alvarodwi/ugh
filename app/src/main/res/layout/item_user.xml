@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  style="@style/Widget.Material3.CardView.Outlined"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_marginBottom="@dimen/dimen_8dp"
+  android:clickable="true"
+  android:focusable="true"
+  app:cardCornerRadius="@dimen/dimen_12dp">
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="@dimen/dimen_16dp"
+    android:paddingVertical="@dimen/dimen_8dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+      android:id="@+id/ivAvatar"
+      android:layout_width="64dp"
+      android:layout_height="64dp"
+      android:contentDescription="@string/cd_user_avatar"
+      android:scaleType="centerCrop"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:src="@tools:sample/backgrounds/scenic" />
+
+    <TextView
+      android:id="@+id/tvUsername"
+      style="@style/TextAppearance.MaterialComponents.Headline6"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="12dp"
+      app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@id/ivAvatar"
+      app:layout_constraintTop_toTopOf="@id/ivAvatar"
+      tools:text="\@alvarodwi" />
+
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

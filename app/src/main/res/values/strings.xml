@@ -1,0 +1,11 @@
+<resources>
+  <string name="app_name">Ugh</string>
+  <!-- TODO: Remove or change this placeholder text -->
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="menu_search">Search</string>
+  <string name="label_home">Find users on github</string>
+  <string name="label_subtitle">Current search query : %s</string>
+  <string name="btn_retry">Retry</string>
+  <string name="cd_user_avatar">User Avatar</string>
+  <string name="label_username">\@%s</string>
+</resources>
