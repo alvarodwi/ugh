@@ -6,6 +6,5 @@ data class User(
     val name: String,
     val avatar: String,
     val followersCount: Int,
-    val followingCount: Int,
-    val createdAt: String
+    val followingCount: Int
 )

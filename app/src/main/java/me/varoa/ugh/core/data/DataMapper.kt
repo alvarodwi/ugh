@@ -2,7 +2,6 @@ package me.varoa.ugh.core.data
 
 import me.varoa.ugh.core.data.remote.json.UserJson
 import me.varoa.ugh.core.domain.model.User
-import me.varoa.ugh.ui.parcelable.UserParcel
 
 fun UserJson.toModel() =
     User(
@@ -11,17 +10,15 @@ fun UserJson.toModel() =
         name = name,
         avatar = avatar,
         followersCount = followersCount,
-        followingCount = followingCount,
-        createdAt = createdAt
+        followingCount = followingCount
     )
 
-fun User.parcelize() =
-    UserParcel(
+fun User.toJson() =
+    UserJson(
         id = id,
         username = username,
         name = name,
         avatar = avatar,
         followersCount = followersCount,
-        followingCount = followingCount,
-        createdAt = createdAt
+        followingCount = followingCount
     )

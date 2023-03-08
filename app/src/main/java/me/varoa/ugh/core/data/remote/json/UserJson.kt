@@ -10,6 +10,5 @@ data class UserJson(
     val name: String = "",
     @SerialName("avatar_url") val avatar: String,
     @SerialName("followers") val followersCount: Int = 0,
-    @SerialName("following") val followingCount: Int = 0,
-    @SerialName("created_at") val createdAt: String = ""
+    @SerialName("following") val followingCount: Int = 0
 )
