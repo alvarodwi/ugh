@@ -1,4 +1,4 @@
-package me.varoa.ugh.ui.screen.home
+package me.varoa.ugh.ui.adapter
 
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -6,8 +6,8 @@ import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import me.varoa.ugh.databinding.ItemLoadStateBinding
+import me.varoa.ugh.ui.adapter.UserLoadStateAdapter.LoadStateViewHolder
 import me.varoa.ugh.ui.ext.viewBinding
-import me.varoa.ugh.ui.screen.home.UserLoadStateAdapter.LoadStateViewHolder
 
 class UserLoadStateAdapter(
     private val retry: () -> Unit

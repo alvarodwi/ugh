@@ -27,7 +27,7 @@
       android:layout_height="match_parent">
 
       <TextView
-        android:id="@+id/tvTitle"
+        android:id="@+id/tv_title"
         style="@style/TextAppearance.MaterialComponents.Headline6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,14 +38,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
       <TextView
-        android:id="@+id/tvSubtitle"
+        android:id="@+id/tv_subtitle"
         style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dimen_16dp"
         android:layout_marginTop="@dimen/dimen_4dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
         tools:text="@string/label_subtitle" />
 
       <androidx.recyclerview.widget.RecyclerView
@@ -55,18 +55,18 @@
         android:layout_marginTop="@dimen/dimen_16dp"
         android:paddingHorizontal="@dimen/dimen_16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
+        app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
         tools:listitem="@layout/item_user"
         tools:visibility="invisible" />
 
       <include
-        android:id="@+id/layoutError"
+        android:id="@+id/layout_error"
         layout="@layout/layout_error"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSubtitle"
+        app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
         tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

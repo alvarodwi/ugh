@@ -10,7 +10,7 @@
   android:padding="@dimen/dimen_16dp">
 
   <TextView
-    android:id="@+id/tvErrorMessage"
+    android:id="@+id/tv_error_message"
     style="@style/TextAppearance.MaterialComponents.Caption"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

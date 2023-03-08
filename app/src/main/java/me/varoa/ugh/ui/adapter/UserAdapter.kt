@@ -1,4 +1,4 @@
-package me.varoa.ugh.ui.screen.home
+package me.varoa.ugh.ui.adapter
 
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -10,8 +10,8 @@ import coil.transform.CircleCropTransformation
 import me.varoa.ugh.R.string
 import me.varoa.ugh.core.domain.model.User
 import me.varoa.ugh.databinding.ItemUserBinding
+import me.varoa.ugh.ui.adapter.UserAdapter.UserViewHolder
 import me.varoa.ugh.ui.ext.viewBinding
-import me.varoa.ugh.ui.screen.home.UserAdapter.UserViewHolder
 
 class UserAdapter(
     private val imageLoader: ImageLoader,

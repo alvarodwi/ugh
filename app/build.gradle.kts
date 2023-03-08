@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   id("com.android.application")
   id("org.jetbrains.kotlin.android")
@@ -7,6 +9,9 @@ plugins {
   id("androidx.navigation.safeargs.kotlin")
   id("dagger.hilt.android.plugin")
 }
+
+val localProperties = Properties()
+localProperties.load(project.rootProject.file("local.properties").inputStream())
 
 android {
   namespace = "me.varoa.ugh"
@@ -18,6 +23,8 @@ android {
     targetSdk = 33
     versionCode = 1
     versionName = "1.0"
+
+    buildConfigField("String", "githubToken", localProperties["github.token"] as String)
   }
 
   buildTypes {

@@ -1,11 +1,16 @@
 <resources>
-  <string name="app_name">Ugh</string>
-  <!-- TODO: Remove or change this placeholder text -->
-  <string name="hello_blank_fragment">Hello blank fragment</string>
+  <string name="app_name">Ugh!</string>
   <string name="menu_search">Search</string>
   <string name="label_home">Find users on github</string>
   <string name="label_subtitle">Current search query : %s</string>
   <string name="btn_retry">Retry</string>
   <string name="cd_user_avatar">User Avatar</string>
   <string name="label_username">\@%s</string>
+  <string name="title_detail_user">Detail User</string>
+  <string name="label_follower_following">%1$d Follower || %2$d Following</string>
+  <string name="hint_search_view">Search a username here</string>
+  <string-array name="title_detail_tabs">
+    <item>Follower</item>
+    <item>Following</item>
+  </string-array>
 </resources>

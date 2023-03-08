@@ -14,31 +14,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingHorizontal="@dimen/dimen_16dp"
-    android:paddingVertical="@dimen/dimen_8dp">
+    android:paddingVertical="@dimen/dimen_16dp">
 
     <com.google.android.material.imageview.ShapeableImageView
-      android:id="@+id/ivAvatar"
-      android:layout_width="64dp"
-      android:layout_height="64dp"
+      android:id="@+id/iv_avatar"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
       android:contentDescription="@string/cd_user_avatar"
       android:scaleType="centerCrop"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent"
-      tools:src="@tools:sample/backgrounds/scenic" />
+      tools:src="@tools:sample/avatars" />
 
     <TextView
-      android:id="@+id/tvUsername"
+      android:id="@+id/tv_username"
       style="@style/TextAppearance.MaterialComponents.Headline6"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:layout_marginStart="12dp"
-      app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+      app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
       app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toEndOf="@id/ivAvatar"
-      app:layout_constraintTop_toTopOf="@id/ivAvatar"
+      app:layout_constraintStart_toEndOf="@id/iv_avatar"
+      app:layout_constraintTop_toTopOf="@id/iv_avatar"
       tools:text="\@alvarodwi" />
-
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

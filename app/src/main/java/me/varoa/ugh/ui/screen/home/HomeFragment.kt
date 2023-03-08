@@ -4,6 +4,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.flow.collectLatest
@@ -12,32 +13,28 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import logcat.logcat
 import me.varoa.ugh.R
 import me.varoa.ugh.databinding.FragmentHomeBinding
+import me.varoa.ugh.ui.adapter.UserAdapter
+import me.varoa.ugh.ui.adapter.UserLoadStateAdapter
 import me.varoa.ugh.ui.base.BaseEvent.ShowErrorMessage
 import me.varoa.ugh.ui.base.BaseFragment
 import me.varoa.ugh.ui.ext.snackbar
 import me.varoa.ugh.ui.ext.viewBinding
-import me.varoa.ugh.ui.screen.home.HomeViewModel.HomeEvent
 
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private val binding by viewBinding<FragmentHomeBinding>()
     private val viewModel by viewModels<HomeViewModel>()
 
     private lateinit var userAdapter: UserAdapter
+    private lateinit var searchView: SearchView
 
     override fun onStart() {
         super.onStart()
         eventJob = viewModel.events
             .onEach { event ->
                 when (event) {
-                    is HomeEvent.SearchTriggered, HomeEvent.SearchCleared -> {
-                        toggleLoading(false)
-                        toggleErrorLayout(true)
-                    }
                     is ShowErrorMessage -> {
-                        toggleLoading(false)
                         modifyErrorLayout(event.message, "🙏")
                         toggleErrorLayout(true)
                         snackbar("Error : ${event.message}")
@@ -49,8 +46,8 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     override fun bindView() {
         binding.toolbar.apply {
             val searchItem = menu.findItem(R.id.action_search)
-            val searchView = searchItem.actionView as SearchView
-
+            searchView = searchItem.actionView as SearchView
+            searchView.queryHint = getString(R.string.hint_search_view)
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     toggleLoading(true)
@@ -66,6 +63,9 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText.isNullOrEmpty()) {
+                        viewModel.searchUser("")
+                    }
                     return false
                 }
             })
@@ -74,7 +74,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         userAdapter = UserAdapter(
             imageLoader = imageLoader,
             onClick = { user ->
-                logcat { "${user.name} clicked!" }
+                moveToDetail(user.username)
             }
         )
         binding.recyclerview.layoutManager = LinearLayoutManager(context)
@@ -83,13 +83,11 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
             footer = UserLoadStateAdapter(userAdapter::retry)
         )
 
-        binding.swipeRefresh.setOnRefreshListener { refresh() }
+        binding.swipeRefresh.isEnabled = false
 
         // lifecycle
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.users.collectLatest {
-                userAdapter.submitData(it)
-            }
+            viewModel.users.collectLatest(userAdapter::submitData)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -104,17 +102,23 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                 .distinctUntilChanged()
                 .collect {
                     if (it is LoadState.NotLoading) {
+                        toggleLoading(false)
                         if (userAdapter.itemCount < 1) {
                             if (viewModel.currentUsername.value.isEmpty()) {
                                 modifyErrorLayout("Ugh, you need to search an username first", "🙏")
                             } else {
                                 modifyErrorLayout("Ugh, your query ended up in zero result", "🤌")
                             }
-
                             toggleErrorLayout(true)
                         } else {
                             toggleErrorLayout(false)
                         }
+                    } else if (it is LoadState.Loading) {
+                        toggleLoading(true)
+                    } else if (it is LoadState.Error) {
+                        toggleLoading(false)
+                        modifyErrorLayout("Error : ${it.error.message}", "🙏")
+                        snackbar("Error : ${it.error.message}")
                     }
                 }
         }
@@ -135,7 +139,7 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
         binding.swipeRefresh.isRefreshing = show
     }
 
-    private fun modifyErrorLayout(message: String, emoji: String, withRetryButton: Boolean = false) {
+    private fun modifyErrorLayout(message: String, emoji: String) {
         binding.layoutError.apply {
             tvMessage.text = message
             tvEmoji.text = emoji
@@ -145,5 +149,11 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
     private fun toggleErrorLayout(flag: Boolean) {
         binding.layoutError.root.isVisible = flag
         binding.recyclerview.isVisible = !flag
+    }
+
+    private fun moveToDetail(username: String) {
+        findNavController().navigate(
+            HomeFragmentDirections.actionHomeToDetail(username)
+        )
     }
 }

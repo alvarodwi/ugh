@@ -1,60 +1,85 @@
 package me.varoa.ugh.ui.screen.detail
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
+import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import logcat.logcat
 import me.varoa.ugh.R
+import me.varoa.ugh.core.domain.model.User
+import me.varoa.ugh.databinding.FragmentDetailBinding
+import me.varoa.ugh.ui.base.BaseEvent.ShowErrorMessage
+import me.varoa.ugh.ui.base.BaseFragment
+import me.varoa.ugh.ui.ext.snackbar
+import me.varoa.ugh.ui.ext.viewBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class DetailFragment : BaseFragment(R.layout.fragment_detail) {
+    private val binding by viewBinding<FragmentDetailBinding>()
+    private val viewModel by viewModels<DetailViewModel>()
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class DetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var detailAdapter: DetailAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onStart() {
+        super.onStart()
+        eventJob = viewModel.events
+            .onEach { event ->
+                when (event) {
+                    is ShowErrorMessage -> {
+                        binding.swipeRefresh.isRefreshing = false
+                        logcat { "Error : ${event.message}" }
+                        snackbar("Error : ${event.message}")
+                    }
+                }
+            }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    override fun bindView() {
+        val tabTitles = resources.getStringArray(R.array.title_detail_tabs)
+        val username = requireArguments().getString("username") ?: ""
+
+        detailAdapter = DetailAdapter(requireActivity(), username, tabTitles.size)
+        binding.swipeRefresh.isEnabled = false
+        binding.swipeRefresh.isRefreshing = true
+        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        binding.viewPager.adapter = detailAdapter
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = tabTitles[position]
+        }.attach()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.detailUser.collectLatest(::loadUser)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail, container, false)
+    private fun loadUser(user: User) {
+        binding.swipeRefresh.isRefreshing = false
+        binding.tvName.text = user.name
+        binding.tvUsername.text = user.username
+        binding.tvFollowerFollowing.text =
+            getString(
+                R.string.label_follower_following,
+                user.followersCount,
+                user.followingCount
+            )
+        binding.ivAvatar.apply {
+            val imgData = ImageRequest.Builder(this.context)
+                .data(user.avatar)
+                .target(this)
+                .transformations(CircleCropTransformation())
+                .allowHardware(true)
+                .build()
+            imageLoader.enqueue(imgData)
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DetailFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic fun newInstance(param1: String, param2: String) =
-            DetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onResume() {
+        super.onResume()
+        viewModel.onRefresh()
     }
 }

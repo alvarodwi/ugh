@@ -31,8 +31,8 @@ class DataModule {
         private const val GITHUB_BASE_URL = "https://api.github.com/"
 
         // https://www.dicoding.com/blog/apa-itu-rate-limit-pada-github-api/
-        private const val GITHUB_PERSONAL_KEY = "8f91021a673e2e8dfdc742e2f6859f6fc6d71888"
-        private val GITHUB_AUTH_KEY get() = "Basic $GITHUB_PERSONAL_KEY"
+        private const val GITHUB_PERSONAL_KEY = BuildConfig.githubToken
+        private val GITHUB_AUTH_KEY get() = "token $GITHUB_PERSONAL_KEY"
     }
 
     private val json = Json {
