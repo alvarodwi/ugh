@@ -7,7 +7,7 @@ fun UserJson.toModel() =
     User(
         id = id,
         username = username,
-        name = name,
+        name = name ?: "",
         avatar = avatar,
         followersCount = followersCount,
         followingCount = followingCount

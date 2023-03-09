@@ -60,7 +60,7 @@ class DetailFragment : BaseFragment(R.layout.fragment_detail) {
     private fun loadUser(user: User) {
         binding.swipeRefresh.isRefreshing = false
         binding.tvName.text = user.name
-        binding.tvUsername.text = user.username
+        binding.tvUsername.text = getString(R.string.label_username, user.username)
         binding.tvFollowerFollowing.text =
             getString(
                 R.string.label_follower_following,

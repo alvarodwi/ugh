@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import me.varoa.ugh.core.domain.model.User
 import me.varoa.ugh.core.domain.repository.UserRepository
-import me.varoa.ugh.ui.base.BaseEvent.ShowErrorMessage
 import me.varoa.ugh.ui.base.BaseViewModel
 import javax.inject.Inject
 
@@ -31,7 +30,7 @@ class DetailViewModel @Inject constructor(
     fun onRefresh() {
         viewModelScope.launch {
             user.getUser(username)
-                .catch { ShowErrorMessage(it.message ?: "") }
+                .catch { setErrorMessage(it.message ?: "") }
                 .collect { result ->
                     if (result.isSuccess) _detailUser.emit(result.getOrThrow())
                     else if (result.isFailure) setErrorMessage(result.exceptionOrNull()?.message)
