@@ -40,6 +40,7 @@ class UserListFragment() : BaseFragment(R.layout.fragment_user_list) {
     private lateinit var userAdapter: UserAdapter
 
     override fun bindView() {
+        toggleLoading(true)
         val searchType = requireArguments().getString("search_type") ?: SearchType.SEARCH_FOLLOWING.name
 
         userAdapter = UserAdapter(
@@ -79,9 +80,12 @@ class UserListFragment() : BaseFragment(R.layout.fragment_user_list) {
                             )
                             toggleErrorLayout(true)
                         } else {
+                            toggleLoading(false)
                             toggleErrorLayout(false)
                         }
                     } else if (it is LoadState.Error) {
+                        toggleLoading(false)
+                        toggleErrorLayout(true)
                         modifyErrorLayout(it.error.message ?: "", "🙏")
                         snackbar(it.error.message ?: "")
                     }
@@ -99,6 +103,11 @@ class UserListFragment() : BaseFragment(R.layout.fragment_user_list) {
     private fun toggleErrorLayout(flag: Boolean) {
         binding.layoutError.root.isVisible = flag
         binding.recyclerview.isVisible = !flag
+    }
+
+    private fun toggleLoading(flag: Boolean) {
+        toggleErrorLayout(!flag)
+        binding.progressBar.isVisible = flag
     }
 
     private fun moveToDetail(username: String) {

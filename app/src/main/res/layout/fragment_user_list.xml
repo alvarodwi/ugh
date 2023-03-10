@@ -12,6 +12,14 @@
     android:layout_margin="@dimen/dimen_16dp"
     tools:listitem="@layout/item_user" />
 
+  <com.google.android.material.progressindicator.CircularProgressIndicator
+    android:id="@+id/progress_bar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:indeterminate="true"
+    />
+
   <include
     android:id="@+id/layout_error"
     layout="@layout/layout_error"
