@@ -1,5 +1,7 @@
 package me.varoa.ugh.ui.screen.detail
 
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,6 +26,7 @@ class DetailFragment : BaseFragment(R.layout.fragment_detail) {
     private val viewModel by viewModels<DetailViewModel>()
 
     private lateinit var detailAdapter: DetailAdapter
+    private lateinit var _user: User
 
     override fun onStart() {
         super.onStart()
@@ -46,7 +49,35 @@ class DetailFragment : BaseFragment(R.layout.fragment_detail) {
         detailAdapter = DetailAdapter(requireActivity(), username, tabTitles.size)
         binding.swipeRefresh.isEnabled = false
         binding.swipeRefresh.isRefreshing = true
-        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+        binding.toolbar.apply {
+            setNavigationOnClickListener { findNavController().popBackStack() }
+            setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.action_favorite -> {
+                        if (::_user.isInitialized) {
+                            viewModel.toggleFavorite(_user)
+                        } else {
+                            snackbar("User hadn't been loaded yet")
+                        }
+                        true
+                    }
+                    R.id.action_share -> {
+                        val shareText = getString(
+                            R.string.share_detail,
+                            username
+                        )
+                        Intent(Intent.ACTION_SEND).also {
+                            it.type = "text/html"
+                            it.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
+                            it.putExtra(Intent.EXTRA_TEXT, shareText)
+                            startActivity(Intent.createChooser(it, "Share via"))
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }
         binding.viewPager.adapter = detailAdapter
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = tabTitles[position]
@@ -55,9 +86,19 @@ class DetailFragment : BaseFragment(R.layout.fragment_detail) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.detailUser.collectLatest(::loadUser)
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isFavorite.collectLatest {
+                binding.toolbar.menu.getItem(0).icon = ContextCompat.getDrawable(
+                    requireContext(),
+                    if (it) R.drawable.ic_heart_filled else R.drawable.ic_heart
+                )
+            }
+        }
     }
 
     private fun loadUser(user: User) {
+        _user = user
         binding.swipeRefresh.isRefreshing = false
         binding.tvName.text = user.name
         binding.tvUsername.text = getString(R.string.label_username, user.username)

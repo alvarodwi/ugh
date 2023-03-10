@@ -1,6 +1,5 @@
-package me.varoa.ugh.ui.screen.detail.list
+package me.varoa.ugh.ui.screen.favorite
 
-import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,35 +11,21 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.varoa.ugh.R
-import me.varoa.ugh.core.data.remote.api.SearchType
-import me.varoa.ugh.databinding.FragmentUserListBinding
+import me.varoa.ugh.databinding.FragmentFavoriteBinding
 import me.varoa.ugh.ui.adapter.UserAdapter
 import me.varoa.ugh.ui.adapter.UserLoadStateAdapter
 import me.varoa.ugh.ui.base.BaseFragment
 import me.varoa.ugh.ui.ext.snackbar
 import me.varoa.ugh.ui.ext.viewBinding
-import me.varoa.ugh.ui.screen.detail.DetailFragmentDirections
 
-class UserListFragment() : BaseFragment(R.layout.fragment_user_list) {
-
-    companion object {
-        fun newInstance(username: String, searchType: SearchType): UserListFragment {
-            return UserListFragment().also { fragment ->
-                fragment.arguments = Bundle().also {
-                    it.putString("username", username)
-                    it.putString("search_type", searchType.name)
-                }
-            }
-        }
-    }
-
-    private val binding by viewBinding<FragmentUserListBinding>()
-    private val viewModel by viewModels<UserListViewModel>()
+class FavoriteFragment : BaseFragment(R.layout.fragment_favorite) {
+    private val binding by viewBinding<FragmentFavoriteBinding>()
+    private val viewModel by viewModels<FavoriteViewModel>()
 
     private lateinit var userAdapter: UserAdapter
 
     override fun bindView() {
-        val searchType = requireArguments().getString("search_type") ?: SearchType.SEARCH_FOLLOWING.name
+        binding.toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
 
         userAdapter = UserAdapter(
             imageLoader = imageLoader,
@@ -68,13 +53,7 @@ class UserListFragment() : BaseFragment(R.layout.fragment_user_list) {
                     if (it is LoadState.NotLoading) {
                         if (userAdapter.itemCount < 1) {
                             modifyErrorLayout(
-                                "Ugh, this user has no ${
-                                if (searchType == SearchType.SEARCH_FOLLOWING.name) {
-                                    "following"
-                                } else {
-                                    "followers"
-                                }
-                                }",
+                                "Ugh, you don't have any favorites yet",
                                 "🤌"
                             )
                             toggleErrorLayout(true)
@@ -103,7 +82,7 @@ class UserListFragment() : BaseFragment(R.layout.fragment_user_list) {
 
     private fun moveToDetail(username: String) {
         findNavController().navigate(
-            DetailFragmentDirections.actionDetailSelf(username)
+            FavoriteFragmentDirections.actionFavoriteToDetail(username)
         )
     }
 }

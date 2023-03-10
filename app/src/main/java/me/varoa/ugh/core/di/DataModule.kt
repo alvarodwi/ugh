@@ -1,6 +1,7 @@
 package me.varoa.ugh.core.di
 
 import android.content.Context
+import androidx.room.Room
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -11,6 +12,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import logcat.logcat
 import me.varoa.ugh.BuildConfig
+import me.varoa.ugh.core.data.local.AppDatabase
+import me.varoa.ugh.core.data.prefs.AppPreferences
 import me.varoa.ugh.core.data.remote.NoConnectionInterceptor
 import me.varoa.ugh.core.data.remote.api.GithubApiService
 import me.varoa.ugh.core.data.remote.api.GithubAuthInterceptor
@@ -93,4 +96,22 @@ class DataModule {
             .build()
         return retrofit.create(GithubApiService::class.java)
     }
+
+    @Singleton
+    @Provides
+    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase =
+        Room.databaseBuilder(
+            appContext,
+            AppDatabase::class.java,
+            "ugh"
+        ).build()
+
+    @Singleton
+    @Provides
+    fun provideFavoriteDao(db: AppDatabase) = db.favoriteDao
+
+    @Singleton
+    @Provides
+    fun provideAppPreferences(@ApplicationContext appContext: Context): AppPreferences =
+        AppPreferences(appContext)
 }

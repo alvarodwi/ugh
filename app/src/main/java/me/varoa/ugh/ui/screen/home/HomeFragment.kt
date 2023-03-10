@@ -1,6 +1,7 @@
 package me.varoa.ugh.ui.screen.home
 
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -19,7 +20,9 @@ import me.varoa.ugh.ui.adapter.UserAdapter
 import me.varoa.ugh.ui.adapter.UserLoadStateAdapter
 import me.varoa.ugh.ui.base.BaseEvent.ShowErrorMessage
 import me.varoa.ugh.ui.base.BaseFragment
+import me.varoa.ugh.ui.ext.AppTheme
 import me.varoa.ugh.ui.ext.snackbar
+import me.varoa.ugh.ui.ext.toggleAppTheme
 import me.varoa.ugh.ui.ext.viewBinding
 
 class HomeFragment : BaseFragment(R.layout.fragment_home) {
@@ -69,6 +72,24 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                     return false
                 }
             })
+
+            this.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.action_theme -> {
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            viewModel.toggleDarkMode()
+                        }
+                        true
+                    }
+                    R.id.action_favorite -> {
+                        findNavController().navigate(
+                            HomeFragmentDirections.actionHomeToFavorite()
+                        )
+                        true
+                    }
+                    else -> false
+                }
+            }
         }
 
         userAdapter = UserAdapter(
@@ -122,16 +143,16 @@ class HomeFragment : BaseFragment(R.layout.fragment_home) {
                     }
                 }
         }
-    }
 
-    private fun refresh() {
-        toggleErrorLayout(false)
-
-        // then refresh the content
-        toggleLoading(true)
-        viewModel.onRefresh()
-        userAdapter.refresh()
-        toggleLoading(false)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.prefs.isDarkMode().distinctUntilChanged().collect {
+                binding.toolbar.menu.getItem(0).icon = ContextCompat.getDrawable(
+                    requireContext(),
+                    if (it) R.drawable.ic_moon else R.drawable.ic_sun
+                )
+                toggleAppTheme(if (it) AppTheme.DARK else AppTheme.LIGHT)
+            }
+        }
     }
 
     private fun toggleLoading(show: Boolean) {

@@ -12,6 +12,7 @@
     android:layout_height="wrap_content"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
+    app:menu="@menu/detail"
     app:navigationIcon="@drawable/ic_arrow_left"
     app:title="@string/title_detail_user" />
 

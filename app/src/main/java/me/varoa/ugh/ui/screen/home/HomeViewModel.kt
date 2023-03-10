@@ -7,8 +7,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import logcat.logcat
+import me.varoa.ugh.core.data.prefs.AppPreferences
 import me.varoa.ugh.core.domain.model.User
 import me.varoa.ugh.core.domain.repository.UserRepository
 import me.varoa.ugh.ui.base.BaseViewModel
@@ -16,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val user: UserRepository
+    private val user: UserRepository,
+    val prefs: AppPreferences
 ) : BaseViewModel() {
     private val _currentUsername = MutableStateFlow<String>("")
     val currentUsername = _currentUsername.asStateFlow()
@@ -36,5 +40,12 @@ class HomeViewModel @Inject constructor(
         val temp = currentUsername.value
         searchUser("")
         searchUser(temp)
+    }
+
+    fun toggleDarkMode() {
+        viewModelScope.launch {
+            logcat { "setDarkMode(${!prefs.isDarkMode().first()})" }
+            prefs.setDarkMode(!prefs.isDarkMode().first())
+        }
     }
 }

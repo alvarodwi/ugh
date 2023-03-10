@@ -13,4 +13,9 @@
     <item>Follower</item>
     <item>Following</item>
   </string-array>
+  <string name="title_favorite">Favorite User</string>
+  <string name="menu_favorite">Favorite</string>
+  <string name="menu_theme">Toggle Theme</string>
+  <string name="menu_share">Share</string>
+  <string name="share_detail">Check this user out!\nhttps://github.com/%s/</string>
 </resources>
